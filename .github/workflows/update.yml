@@ -1,0 +1,36 @@
+name: Update Linux Fork from Upstream
+
+# Trigger: stündlich + manuell
+on:
+  schedule:
+    - cron: "0 * * * *"   # jede Stunde
+  workflow_dispatch:
+
+jobs:
+  update-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout Fork
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0  # Volles Repo für Merge
+
+      # 2. Upstream hinzufügen
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/raspberrypi/linux.git || true
+          git fetch upstream
+
+      # 3. Merge Upstream Änderungen
+      - name: Merge upstream changes
+        run: |
+          git checkout main
+          git merge upstream/main --allow-unrelated-histories --no-edit || echo "Nothing to merge"
+
+      # 4. Push Änderungen zurück zu Fork
+      - name: Push changes to fork
+        run: |
+          git push origin main
