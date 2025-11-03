@@ -1,10 +1,6 @@
 name: Update Linux Fork from Upstream
 
-# Trigger: stündlich + manuell
-on:
-  schedule:
-    - cron: "0 * * * *"   # jede Stunde
-  workflow_dispatch:
+
 
 jobs:
   update-fork:
